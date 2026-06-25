@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#c1121f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="CKO 选招" />
+    <title>CKO 2026 选招练习</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">CKO 中国剑玉公开赛 · 2026</p>
+        <h1>选招练习</h1>
+      </div>
+      <div class="top-summary" aria-label="选招概览">
+        <span>R1 <small id="round1Count">0/5</small><strong id="round1Score">0</strong></span>
+        <span>R2 <small id="round2Count">0/5</small><strong id="round2Score">0</strong></span>
+        <span>理论总分 <strong id="planScore">0</strong></span>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <nav class="tabs" aria-label="功能切换">
+        <button class="tab active" data-view="pickView">选招</button>
+        <button class="tab" data-view="practiceView">计时练习</button>
+        <button class="tab" data-view="statsView">统计</button>
+      </nav>
+
+      <section id="pickView" class="view-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">先定两轮策略</p>
+            <h2>选每轮 5 招</h2>
+          </div>
+          <div class="round-switch" role="group" aria-label="选择轮次">
+            <button class="round-button active" data-round="1">Round 1</button>
+            <button class="round-button" data-round="2">Round 2</button>
+          </div>
+        </div>
+
+        <div class="pick-layout">
+          <aside class="selection-panel">
+            <div class="selection-header">
+              <p class="eyebrow" id="activeRoundLabel">Round 1</p>
+              <h3>当前 5 招</h3>
+              <p id="activeRoundScore">0 分</p>
+            </div>
+            <ol id="selectedList" class="selected-list"></ol>
+            <p id="selectionHint" class="hint">从右侧选择 5 招。再次点击可取消。</p>
+          </aside>
+
+          <div class="trick-browser">
+            <label class="search-box">
+              <span>搜索</span>
+              <input id="searchInput" type="search" placeholder="输入 LEVEL 或中文招式名" />
+            </label>
+            <div id="levelFilters" class="level-filters" aria-label="Level 筛选"></div>
+            <div id="trickGrid" class="trick-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="practiceView" class="view-panel hidden">
+        <div class="practice-header">
+          <div>
+            <p class="eyebrow">3 分钟模拟</p>
+            <h2 id="practiceTitle">Round 1 练习</h2>
+          </div>
+          <div class="round-switch" role="group" aria-label="练习轮次">
+            <button class="practice-round-button active" data-round="1">Round 1</button>
+            <button class="practice-round-button" data-round="2">Round 2</button>
+          </div>
+        </div>
+
+        <div class="timer-stage">
+          <div class="timer-block">
+            <span id="timerText">03:00</span>
+            <p id="timerStatus">准备开始</p>
+          </div>
+          <div class="timer-actions">
+            <button id="startTimerBtn" class="primary-button">开始</button>
+            <button id="pauseTimerBtn" class="secondary-button">暂停</button>
+            <button id="finishTimerBtn" class="secondary-button">结束并记录</button>
+            <button id="resetTimerBtn" class="secondary-button">重置</button>
+          </div>
+        </div>
+
+        <div id="practiceTricks" class="practice-tricks"></div>
+
+        <section id="resultPanel" class="result-panel hidden">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">本轮结果</p>
+              <h3>勾选完成的招式，没完成就取消</h3>
+            </div>
+            <strong id="resultScore">0 分</strong>
+          </div>
+          <div id="resultChecks" class="result-checks"></div>
+          <div class="button-row">
+            <button id="saveResultBtn" class="primary-button">保存练习</button>
+            <button id="cancelResultBtn" class="secondary-button">取消</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="statsView" class="view-panel hidden">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">练习后看趋势</p>
+            <h2>平均得分和完成率</h2>
+          </div>
+          <button id="clearRecordsBtn" class="secondary-button danger">清空练习记录</button>
+        </div>
+        <div class="storage-note">
+          <strong>手机保存规则</strong>
+          <span>同一台手机、同一个浏览器会自动保留分数；清理网站数据、无痕模式、换手机或换浏览器不会自动带过去。</span>
+        </div>
+        <div id="statsCards" class="stats-grid"></div>
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">招式稳定性</p>
+            <h3>已选招式完成率</h3>
+          </div>
+        </div>
+        <div id="completionList" class="completion-list"></div>
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">最近记录</p>
+            <h3>练习历史</h3>
+          </div>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+    </main>
+
+    <script src="cko-data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

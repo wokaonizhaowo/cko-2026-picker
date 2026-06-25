@@ -1,0 +1,9 @@
+{
+  "name": "CKO 2026 选招练习",
+  "short_name": "CKO 选招",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f3eb",
+  "theme_color": "#c1121f",
+  "lang": "zh-CN"
+}
