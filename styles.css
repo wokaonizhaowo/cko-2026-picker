@@ -307,6 +307,8 @@ button:disabled {
 .practice-card,
 .check-card,
 .stat-card,
+.training-summary article,
+.priority-item,
 .completion-item,
 .history-item {
   border: 1px solid var(--line);
@@ -441,6 +443,37 @@ button:disabled {
   gap: 14px;
 }
 
+.training-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.training-summary article {
+  padding: 14px;
+}
+
+.training-summary span,
+.priority-item span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.training-summary strong {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.training-summary small,
+.priority-item small {
+  color: var(--muted);
+}
+
 .stat-card {
   padding: 18px;
 }
@@ -483,10 +516,42 @@ button:disabled {
   background: #faf7f0;
 }
 
+.priority-list,
 .completion-list,
 .history-list {
   display: grid;
   gap: 10px;
+}
+
+.priority-item {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+}
+
+.priority-item b {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--red);
+  color: white;
+}
+
+.priority-item strong {
+  display: block;
+  margin: 4px 0;
+  font-size: 17px;
+  line-height: 1.35;
+}
+
+.priority-item em {
+  color: var(--red);
+  font-style: normal;
+  font-weight: 900;
 }
 
 .completion-item,
@@ -535,7 +600,8 @@ button:disabled {
   }
 
   .pick-layout,
-  .stats-grid {
+  .stats-grid,
+  .training-summary {
     grid-template-columns: 1fr;
   }
 
@@ -567,7 +633,88 @@ button:disabled {
   }
 
   .topbar {
-    padding: 24px 14px 14px;
+    padding: 18px 12px 10px;
+  }
+
+  .topbar h1 {
+    font-size: 34px;
+  }
+
+  .top-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  .top-summary span {
+    min-width: 0;
+    padding: 9px 8px;
+  }
+
+  .top-summary strong {
+    font-size: 16px;
+  }
+
+  .section-heading,
+  .practice-header {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .section-heading h2,
+  .practice-header h2 {
+    font-size: 24px;
+  }
+
+  .selection-panel {
+    padding: 12px;
+  }
+
+  .selected-list {
+    min-height: 0;
+  }
+
+  .search-box {
+    padding: 8px 10px;
+  }
+
+  .level-filters {
+    gap: 6px;
+    margin: 10px 0 12px;
+  }
+
+  .level-filters button {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .trick-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .trick-card {
+    min-height: 0;
+    padding: 10px 12px;
+  }
+
+  .trick-card strong {
+    margin-top: 4px;
+    font-size: 19px;
+    line-height: 1.28;
+  }
+
+  .trick-card span,
+  .practice-card span,
+  .check-card span,
+  .history-item span {
+    font-size: 12px;
+  }
+
+  .trick-card em {
+    margin-top: 6px;
   }
 
   .timer-actions,
@@ -575,10 +722,49 @@ button:disabled {
     flex-wrap: wrap;
   }
 
-  .timer-actions button,
   .round-switch button,
   .tab {
     flex: 1;
+  }
+
+  .timer-stage {
+    min-height: calc(100vh - 300px);
+    justify-content: center;
+    padding: 18px;
+  }
+
+  .timer-block span {
+    font-size: clamp(86px, 26vw, 132px);
+    text-align: center;
+  }
+
+  .timer-block p {
+    text-align: center;
+  }
+
+  .timer-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .timer-actions button {
+    min-height: 48px;
+  }
+
+  .practice-tricks {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .practice-card {
+    min-height: 0;
+    padding: 12px;
+  }
+
+  .practice-card strong {
+    font-size: 20px;
+    line-height: 1.25;
   }
 
   .tabs {
@@ -602,5 +788,32 @@ button:disabled {
 
   .storage-note {
     grid-template-columns: 1fr;
+  }
+
+  .training-summary {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .training-summary article {
+    padding: 10px;
+  }
+
+  .training-summary strong {
+    font-size: 28px;
+  }
+
+  .priority-item {
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+  }
+
+  .priority-item b {
+    width: 26px;
+    height: 26px;
+  }
+
+  .priority-item em {
+    grid-column: 2;
   }
 }

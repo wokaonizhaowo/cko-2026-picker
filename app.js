@@ -47,7 +47,9 @@ const els = {
   saveResultBtn: document.querySelector("#saveResultBtn"),
   cancelResultBtn: document.querySelector("#cancelResultBtn"),
   clearRecordsBtn: document.querySelector("#clearRecordsBtn"),
+  trainingSummary: document.querySelector("#trainingSummary"),
   statsCards: document.querySelector("#statsCards"),
+  priorityList: document.querySelector("#priorityList"),
   completionList: document.querySelector("#completionList"),
   historyList: document.querySelector("#historyList"),
 };
@@ -171,6 +173,7 @@ function renderAll() {
 }
 
 function renderNavigation() {
+  document.body.dataset.view = state.activeView;
   els.tabs.forEach((button) => {
     button.classList.toggle("active", button.dataset.view === state.activeView);
   });
@@ -455,9 +458,44 @@ function savePracticeResult() {
 }
 
 function renderStats() {
+  renderTrainingSummary();
   els.statsCards.innerHTML = ["1", "2"].map((round) => renderRoundStats(round)).join("");
+  renderPriorityList();
   renderCompletionList();
   renderHistoryList();
+}
+
+function renderTrainingSummary() {
+  const todayKey = getDateKey(new Date());
+  const recentKeys = new Set();
+  for (let i = 0; i < 7; i += 1) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    recentKeys.add(getDateKey(date));
+  }
+
+  const practicedDays = new Set(state.data.records.map((record) => getDateKey(new Date(record.date))));
+  const todayCount = state.data.records.filter((record) => getDateKey(new Date(record.date)) === todayKey).length;
+  const recentCount = state.data.records.filter((record) => recentKeys.has(getDateKey(new Date(record.date)))).length;
+  const streak = getPracticeStreak(practicedDays);
+
+  els.trainingSummary.innerHTML = `
+    <article>
+      <span>今天</span>
+      <strong>${todayCount}</strong>
+      <small>轮</small>
+    </article>
+    <article>
+      <span>近 7 天</span>
+      <strong>${recentCount}</strong>
+      <small>轮</small>
+    </article>
+    <article>
+      <span>连续</span>
+      <strong>${streak}</strong>
+      <small>天</small>
+    </article>
+  `;
 }
 
 function renderRoundStats(round) {
@@ -478,6 +516,43 @@ function renderRoundStats(round) {
       </div>
     </article>
   `;
+}
+
+function renderPriorityList() {
+  const selected = [...getRoundTricks("1"), ...getRoundTricks("2")];
+  if (!selected.length) {
+    els.priorityList.innerHTML = `<div class="empty-state">选招后这里会自动列出最该练的 3 招。</div>`;
+    return;
+  }
+
+  const priorities = selected
+    .map((trick) => {
+      const attempts = state.data.records.filter((record) => record.plannedIds.includes(trick.id));
+      const done = attempts.filter((record) => record.completedIds.includes(trick.id));
+      const rate = attempts.length ? done.length / attempts.length : 0;
+      const priority = trick.score * (1 - rate) + (attempts.length ? 0 : trick.score * 0.45);
+      return { trick, attempts: attempts.length, done: done.length, rate, priority };
+    })
+    .sort((a, b) => b.priority - a.priority || b.trick.score - a.trick.score)
+    .slice(0, 3);
+
+  els.priorityList.innerHTML = priorities
+    .map((item, index) => {
+      const rateText = item.attempts ? `${Math.round(item.rate * 100)}%` : "还没记录";
+      const detail = item.attempts ? `${item.done}/${item.attempts} 次完成` : "先建立一次练习记录";
+      return `
+        <article class="priority-item">
+          <b>${index + 1}</b>
+          <div>
+            <span>${item.trick.code}</span>
+            <strong>${item.trick.zhName}</strong>
+            <small>${detail}</small>
+          </div>
+          <em>${rateText}</em>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderCompletionList() {
@@ -534,6 +609,23 @@ function getRoundTricks(round) {
 
 function getOtherRound(round) {
   return round === "1" ? "2" : "1";
+}
+
+function getDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getPracticeStreak(practicedDays) {
+  let streak = 0;
+  const cursor = new Date();
+  while (practicedDays.has(getDateKey(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
 }
 
 function sumScore(items) {
