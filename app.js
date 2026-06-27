@@ -305,7 +305,7 @@ function toggleTrick(trickId) {
 
 function renderPractice() {
   const selected = getRoundTricks(state.practiceRound);
-  els.practiceTitle.textContent = `Round ${state.practiceRound} 练习`;
+  els.practiceTitle.textContent = `R${state.practiceRound} 练习`;
   renderTimer();
 
   if (!selected.length) {

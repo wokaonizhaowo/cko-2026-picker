@@ -354,6 +354,11 @@ button:disabled {
   margin-bottom: 18px;
 }
 
+.practice-board {
+  display: grid;
+  gap: 14px;
+}
+
 .timer-stage {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -624,6 +629,14 @@ button:disabled {
     padding-bottom: calc(76px + env(safe-area-inset-bottom));
   }
 
+  body[data-view="practiceView"] .topbar {
+    display: none;
+  }
+
+  body[data-view="practiceView"] .app-shell {
+    margin-top: 10px;
+  }
+
   .app-shell {
     width: min(100% - 20px, 1260px);
   }
@@ -665,6 +678,37 @@ button:disabled {
   .section-heading h2,
   .practice-header h2 {
     font-size: 24px;
+  }
+
+  body[data-view="practiceView"] .view-panel {
+    padding: 10px;
+  }
+
+  body[data-view="practiceView"] .practice-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  body[data-view="practiceView"] .practice-header .eyebrow {
+    display: none;
+  }
+
+  body[data-view="practiceView"] .practice-header h2 {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  body[data-view="practiceView"] .practice-header .round-switch {
+    justify-self: end;
+    gap: 6px;
+  }
+
+  body[data-view="practiceView"] .practice-round-button {
+    min-height: 38px;
+    padding: 0 12px;
   }
 
   .selection-panel {
@@ -728,17 +772,19 @@ button:disabled {
   }
 
   .timer-stage {
-    min-height: calc(100vh - 300px);
+    min-height: 0;
     justify-content: center;
-    padding: 18px;
+    gap: 10px;
+    padding: 12px;
   }
 
   .timer-block span {
-    font-size: clamp(86px, 26vw, 132px);
+    font-size: clamp(64px, 20vw, 96px);
     text-align: center;
   }
 
   .timer-block p {
+    margin-top: 5px;
     text-align: center;
   }
 
@@ -749,22 +795,26 @@ button:disabled {
   }
 
   .timer-actions button {
-    min-height: 48px;
+    min-height: 40px;
+    padding: 0 8px;
+    font-size: 14px;
   }
 
   .practice-tricks {
-    gap: 8px;
-    margin-top: 10px;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 0;
   }
 
   .practice-card {
     min-height: 0;
-    padding: 12px;
+    padding: 8px 10px;
   }
 
   .practice-card strong {
-    font-size: 20px;
-    line-height: 1.25;
+    margin-top: 3px;
+    font-size: 18px;
+    line-height: 1.22;
   }
 
   .tabs {

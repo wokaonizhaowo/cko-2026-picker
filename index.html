@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-title" content="CKO 选招" />
     <title>CKO 2026 选招练习</title>
     <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="stylesheet" href="styles.css?v=20260626a" />
+    <link rel="stylesheet" href="styles.css?v=20260627a" />
   </head>
   <body>
     <header class="topbar">
@@ -76,20 +76,22 @@
           </div>
         </div>
 
-        <div class="timer-stage">
-          <div class="timer-block">
-            <span id="timerText">03:00</span>
-            <p id="timerStatus">准备开始</p>
+        <div class="practice-board">
+          <div class="timer-stage">
+            <div class="timer-block">
+              <span id="timerText">03:00</span>
+              <p id="timerStatus">准备开始</p>
+            </div>
+            <div class="timer-actions">
+              <button id="startTimerBtn" class="primary-button">开始</button>
+              <button id="pauseTimerBtn" class="secondary-button">暂停</button>
+              <button id="finishTimerBtn" class="secondary-button">结束并记录</button>
+              <button id="resetTimerBtn" class="secondary-button">重置</button>
+            </div>
           </div>
-          <div class="timer-actions">
-            <button id="startTimerBtn" class="primary-button">开始</button>
-            <button id="pauseTimerBtn" class="secondary-button">暂停</button>
-            <button id="finishTimerBtn" class="secondary-button">结束并记录</button>
-            <button id="resetTimerBtn" class="secondary-button">重置</button>
-          </div>
-        </div>
 
-        <div id="practiceTricks" class="practice-tricks"></div>
+          <div id="practiceTricks" class="practice-tricks"></div>
+        </div>
 
         <section id="resultPanel" class="result-panel hidden">
           <div class="section-heading compact">
@@ -145,7 +147,7 @@
       </section>
     </main>
 
-    <script src="cko-data.js?v=20260626a"></script>
-    <script src="app.js?v=20260626a"></script>
+    <script src="cko-data.js?v=20260627a"></script>
+    <script src="app.js?v=20260627a"></script>
   </body>
 </html>
