@@ -7,6 +7,7 @@ const state = {
   activeView: "pickView",
   pickRound: "1",
   practiceRound: "1",
+  replaceIndex: null,
   levelFilter: "all",
   search: "",
   timeLeft: totalSeconds,
@@ -34,6 +35,7 @@ const els = {
   levelFilters: document.querySelector("#levelFilters"),
   trickGrid: document.querySelector("#trickGrid"),
   practiceTitle: document.querySelector("#practiceTitle"),
+  practiceRoundScore: document.querySelector("#practiceRoundScore"),
   timerText: document.querySelector("#timerText"),
   timerStatus: document.querySelector("#timerStatus"),
   startTimerBtn: document.querySelector("#startTimerBtn"),
@@ -127,6 +129,7 @@ function bindEvents() {
   els.roundButtons.forEach((button) => {
     button.addEventListener("click", () => {
       state.pickRound = button.dataset.round;
+      state.replaceIndex = null;
       renderAll();
     });
   });
@@ -204,12 +207,15 @@ function renderSelection() {
   const selected = getRoundTricks(state.pickRound);
   const otherRound = getOtherRound(state.pickRound);
   const otherCount = state.data.rounds[otherRound].length;
+  const replacingTrick = Number.isInteger(state.replaceIndex) ? selected[state.replaceIndex] : null;
   els.activeRoundLabel.textContent = `Round ${state.pickRound}`;
   els.activeRoundScore.textContent = `${formatScore(sumScore(selected))} 分`;
   els.selectionHint.textContent =
-    selected.length === 5
-      ? "本轮已满 5 招。取消一招后可重新选择。"
-      : `从右侧选择 5 招。另一轮已选 ${otherCount} 招，不能重复选。`;
+    replacingTrick
+      ? `正在替换第 ${state.replaceIndex + 1} 招：${replacingTrick.code}。从招式表点一个新招即可替换。`
+      : selected.length === 5
+        ? "本轮已满 5 招。点某一招的「替换」，再点新招即可更换。"
+        : `从右侧选择 5 招。另一轮已选 ${otherCount} 招，不能重复选。`;
 
   if (!selected.length) {
     els.selectedList.innerHTML = `<li class="muted">还没有选择招式</li>`;
@@ -218,11 +224,17 @@ function renderSelection() {
 
   els.selectedList.innerHTML = selected
     .map(
-      (trick) => `
-        <li>
-          <span>${trick.code}</span>
-          <strong>${trick.zhName}</strong>
-          <button type="button" data-remove="${trick.id}">移除</button>
+      (trick, index) => `
+        <li class="${state.replaceIndex === index ? "replacing" : ""}">
+          <b>${index + 1}</b>
+          <div>
+            <span>${trick.code}</span>
+            <strong>${trick.zhName}</strong>
+          </div>
+          <div class="selected-actions">
+            <button type="button" data-replace="${index}">${state.replaceIndex === index ? "取消" : "替换"}</button>
+            <button type="button" data-remove="${trick.id}">移除</button>
+          </div>
         </li>
       `,
     )
@@ -230,6 +242,13 @@ function renderSelection() {
 
   els.selectedList.querySelectorAll("[data-remove]").forEach((button) => {
     button.addEventListener("click", () => toggleTrick(button.dataset.remove));
+  });
+  els.selectedList.querySelectorAll("[data-replace]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const nextIndex = Number(button.dataset.replace);
+      state.replaceIndex = state.replaceIndex === nextIndex ? null : nextIndex;
+      renderAll();
+    });
   });
 }
 
@@ -258,6 +277,7 @@ function renderTrickGrid() {
   const otherRound = getOtherRound(state.pickRound);
   const otherSelectedSet = new Set(state.data.rounds[otherRound]);
   const roundFull = selectedIds.length >= 5;
+  const replacing = Number.isInteger(state.replaceIndex);
   const query = state.search.toLowerCase();
 
   const filtered = tricks.filter((trick) => {
@@ -273,10 +293,15 @@ function renderTrickGrid() {
     .map((trick) => {
       const selected = selectedSet.has(trick.id);
       const selectedElsewhere = otherSelectedSet.has(trick.id);
-      const blocked = selectedElsewhere || (roundFull && !selected);
-      const status = selectedElsewhere ? `<em>已在 R${otherRound}</em>` : "";
+      const replaceTarget = replacing && !selected && !selectedElsewhere;
+      const blocked = selectedElsewhere || (roundFull && !selected && !replacing);
+      const status = selectedElsewhere
+        ? `<em>已在 R${otherRound}</em>`
+        : replaceTarget
+          ? `<em>点此替换第 ${state.replaceIndex + 1} 招</em>`
+          : "";
       return `
-        <button type="button" class="trick-card ${selected ? "selected" : ""} ${blocked ? "blocked" : ""}" data-trick="${trick.id}" ${blocked ? "disabled" : ""}>
+        <button type="button" class="trick-card ${selected ? "selected" : ""} ${blocked ? "blocked" : ""} ${replaceTarget ? "replace-target" : ""}" data-trick="${trick.id}" ${blocked ? "disabled" : ""}>
           <span>${trick.code}</span>
           <strong>${trick.zhName}</strong>
           ${status}
@@ -294,8 +319,23 @@ function toggleTrick(trickId) {
   const round = state.data.rounds[state.pickRound];
   const otherRound = getOtherRound(state.pickRound);
   const index = round.indexOf(trickId);
+  const replacing = Number.isInteger(state.replaceIndex);
+
+  if (replacing && index < 0 && !state.data.rounds[otherRound].includes(trickId)) {
+    round[state.replaceIndex] = trickId;
+    state.replaceIndex = null;
+    saveState();
+    renderAll();
+    return;
+  }
+
   if (index >= 0) {
     round.splice(index, 1);
+    if (state.replaceIndex === index || state.replaceIndex >= round.length) {
+      state.replaceIndex = null;
+    } else if (state.replaceIndex > index) {
+      state.replaceIndex -= 1;
+    }
   } else if (round.length < 5 && !state.data.rounds[otherRound].includes(trickId)) {
     round.push(trickId);
   }
@@ -306,6 +346,7 @@ function toggleTrick(trickId) {
 function renderPractice() {
   const selected = getRoundTricks(state.practiceRound);
   els.practiceTitle.textContent = `R${state.practiceRound} 练习`;
+  els.practiceRoundScore.textContent = `${formatScore(sumScore(selected))} 分`;
   renderTimer();
 
   if (!selected.length) {
@@ -319,8 +360,9 @@ function renderPractice() {
   els.finishTimerBtn.disabled = selected.length !== 5 || state.timerState === "ended";
   els.practiceTricks.innerHTML = selected
     .map(
-      (trick) => `
+      (trick, index) => `
         <article class="practice-card">
+          <b>${index + 1}</b>
           <span>${trick.code}</span>
           <strong>${trick.zhName}</strong>
         </article>
